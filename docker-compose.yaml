@@ -9,3 +9,9 @@ services:
       MYSQL_DATABASE: mydatabase
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypassword
+  
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    image: backend-image
