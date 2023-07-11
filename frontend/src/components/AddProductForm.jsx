@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Form, Button } from 'react-bootstrap';
 import NavBar from "./NavBar";
+import Stocks from "../services/routing";
 
 function AddProductForm(){
 
@@ -20,8 +21,23 @@ function AddProductForm(){
         }
     }
 
-    const handleFormSubmit = (event) => {
+    const handleFormSubmit = async (event) => {
         event.preventDefault();
+
+        const productData = {
+            name,
+            id,
+            description,
+            colour,
+            size,
+        };
+      
+        try {
+            await Stocks.saveProductData(productData);
+        }catch (error){
+            console.log(error);
+        }
+        
         console.log('Form submitted!');
         console.log('Product Name:', name);
         console.log('Product Id:', id);
