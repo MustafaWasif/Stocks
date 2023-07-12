@@ -1,14 +1,13 @@
 import http from "./http-common";
 
 class Stocks {
-  async saveProductData(data) {
-
     // POST request
-    return await http.post("api/productData", data);
-  }
+    async saveProductData(data) {
+        return await http.post("api/productData", data);
+    }
 
     // GET request
-    async getAllProduct(){
+    async getAllProducts(){
         return await http.get("api/product-list");
     }
 

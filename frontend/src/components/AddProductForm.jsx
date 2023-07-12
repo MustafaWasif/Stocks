@@ -1,9 +1,12 @@
 import { useState } from "react"
-import { Form, Button } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
+import { Form, Button, Alert } from 'react-bootstrap';
 import NavBar from "./NavBar";
 import Stocks from "../services/routing";
 
 function AddProductForm(){
+
+    const navigate = useNavigate();
 
     // Product Info
     const [name, setName] = useState("");
@@ -13,6 +16,9 @@ function AddProductForm(){
     const [size, setSize] = useState("medium"); // default size
 
     const validSizes = ['small', 'medium', 'large'];
+
+    // success Alert
+    const [successAlert, setSuccessAlert] = useState(false);
     
     const handleSizeChange = (event) => {
         const newSize = event.target.value;
@@ -25,8 +31,8 @@ function AddProductForm(){
         event.preventDefault();
 
         const productData = {
-            name,
             id,
+            name,
             description,
             colour,
             size,
@@ -34,16 +40,24 @@ function AddProductForm(){
       
         try {
             await Stocks.saveProductData(productData);
+            setSuccessAlert(true);
+            
+            // Navigate to MyStore Page after 2 seconds
+            setTimeout(() => {
+                navigate("/mystore");
+            }, 2000);
         }catch (error){
+            setSuccessAlert(false);
             console.log(error);
         }
+
+        // console.log('Form submitted!');
+        // console.log('Product Name:', name);
+        // console.log('Product Id:', id);
+        // console.log('Description:', description);
+        // console.log('Colour:', colour);
+        // console.log('Size:', size);
         
-        console.log('Form submitted!');
-        console.log('Product Name:', name);
-        console.log('Product Id:', id);
-        console.log('Description:', description);
-        console.log('Colour:', colour);
-        console.log('Size:', size);
     }
 
     return(
@@ -53,7 +67,11 @@ function AddProductForm(){
             <h1 className="mb-4">Product Information Form</h1>
             <div className="container mt-4 mx-4">
                 <Form onSubmit={handleFormSubmit}>
-
+                    {successAlert && (
+                        <Alert variant="success">
+                            Listing saved
+                        </Alert>
+                    )}
                     <Form.Group controlId="name" className="my-3">
                         <Form.Label className="fw-bold">Product Name</Form.Label>
                         <Form.Control type="string" required value={name} onChange={(e) => setName(e.target.value)}/>

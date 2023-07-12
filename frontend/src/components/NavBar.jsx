@@ -4,7 +4,7 @@ function NavBar(){
     const navigate = useNavigate();
 
     const handleViewProductClick = () => {
-        navigate("");
+        navigate("/mystore");
     }
 
     const handleAddProductClick = () => {

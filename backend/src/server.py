@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -27,18 +28,9 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-@app.get("/", tags=["root"])
-async def read_root() -> dict:
-    return {"message": "Welcome to your todo list."}
-
-@app.get("/test")
-async def test_endpoint():
-    return {"message": "This is a test endpoint"}
-
 # SQLAlchemy Model
 class Product(Base):
     __tablename__ = "products"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     description = Column(String(255))
@@ -47,6 +39,34 @@ class Product(Base):
 
 # Create tables
 Base.metadata.create_all(bind=engine)
+
+
+class ProductData(BaseModel):
+    name: str
+    id: int
+    description: str
+    colour: str
+    size: str
+
+
+
+@app.get("/", tags=["root"])
+async def read_root() -> dict:
+    return {"message": "Welcome to your todo list."}
+
+@app.get("/test")
+async def test_endpoint():
+    return {"message": "This is a test endpoint"}
+
+@app.get("/api/product-list", tags=["product"])
+async def getProducts() -> dict:
+    db = SessionLocal()
+    products = db.query(Product).all()
+
+    # Iterate over the products list and convert each Product object to a dictionary
+    product_list = [ProductData(name=product.name, id=product.id, description=product.description,
+                               colour=product.colour, size=product.size) for product in products]
+    return {"data": product_list}
 
 @app.post("/api/productData", tags=["product"])
 async def saveFormData(data: dict) -> dict:
@@ -60,7 +80,7 @@ async def saveFormData(data: dict) -> dict:
 
      # Store in database
     db = SessionLocal()
-    product = Product(name=name, description=description, colour=colour, size=size)
+    product = Product(name=name, id=id, description=description, colour=colour, size=size)
     db.add(product)
     db.commit()
     db.refresh(product)

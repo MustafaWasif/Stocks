@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
-import MyStorePage from './components/NavBar';
+import MyStorePage from './components/MyStorePage';
 import AddProductForm from './components/AddProductForm';
 
 function App() {
