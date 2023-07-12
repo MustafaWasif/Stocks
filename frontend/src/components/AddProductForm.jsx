@@ -10,7 +10,7 @@ function AddProductForm(){
 
     // Product Info
     const [name, setName] = useState("");
-    const [id, setId] = useState(""); //is a number
+    const [id, setId] = useState(""); 
     const [description, setDescription] = useState("");
     const [colour, setColour] = useState("");
     const [size, setSize] = useState("medium"); // default size
@@ -50,13 +50,6 @@ function AddProductForm(){
             setSuccessAlert(false);
             console.log(error);
         }
-
-        // console.log('Form submitted!');
-        // console.log('Product Name:', name);
-        // console.log('Product Id:', id);
-        // console.log('Description:', description);
-        // console.log('Colour:', colour);
-        // console.log('Size:', size);
         
     }
 

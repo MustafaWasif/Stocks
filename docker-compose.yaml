@@ -1,11 +1,42 @@
-version: '3.7'
+version: "3.7"
 
 services:
-  db:
-    image: mysql
-    restart: always
-    environment: 
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - 8000:8000
+    environment:
+      - MYSQL_USER=wasif
+      - MYSQL_PASSWORD=password
+      - MYSQL_HOST=database
+      - MYSQL_DATABASE=MYSQLDB
+    depends_on:
+      - database
+    command: sh -c './wait-for-it.sh mysql:3306 -- python /app/src/main.py'
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    depends_on:
+    - backend
+    ports:
+      - 3000:3000
+    networks:
+      - mynetwork
+  
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=MYSQLDB
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

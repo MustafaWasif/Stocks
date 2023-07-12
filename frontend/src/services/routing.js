@@ -6,9 +6,14 @@ class Stocks {
         return await http.post("api/productData", data);
     }
 
-    // GET request
+    // GET all product request
     async getAllProducts(){
         return await http.get("api/product-list");
+    }
+
+    // GET request to fetch a specific product
+    async getProduct(productId) {
+        return await http.get(`/api/productData/${productId}`);
     }
 
     // PUT request (Update)
