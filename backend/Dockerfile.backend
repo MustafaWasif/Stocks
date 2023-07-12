@@ -1,17 +1,24 @@
 FROM python:3.9
 WORKDIR /app
 
-# Copy the requirements.txt file to the container
+# Install MySQL client
+RUN apt-get update && apt-get install -y default-mysql-client
+
+# Copy the wait-for-it.sh script to the container
+COPY wait-for-it.sh /app/wait-for-it.sh
+
+# Make the script executable
+RUN chmod +x /app/wait-for-it.sh
+
+# Copy the source code and requirements file to the container
 COPY requirements.txt .
+COPY src ./src
 
 # Install the Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the source code to the container
-COPY src ./src
 
 # Expose the port that the backend service will be running on
 EXPOSE 8000
 
 # Set the command to run the backend server
-CMD ["python", "src/main.py"]
+CMD ["./wait-for-it.sh", "mysql:3306", "--", "python", "src/main.py"]
